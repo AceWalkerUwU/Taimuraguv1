@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taimuragu - Rhythm Reaction Game</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <!-- Main Menu -->
+        <div id="main-menu" class="screen active">
+            <div class="menu-container">
+                <h1 class="game-title">TAIMURAGU</h1>
+                <p class="game-subtitle">Master the art of delayed precision</p>
+                <div class="menu-buttons">
+                    <button class="menu-btn" id="play-btn">PLAY</button>
+                    <button class="menu-btn" id="editor-btn">MAP EDITOR</button>
+                    <button class="menu-btn" id="how-to-play-btn">HOW TO PLAY</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Song Selection -->
+        <div id="song-select" class="screen">
+            <div class="song-select-container">
+                <h2>Select a Song</h2>
+                <div class="song-list" id="song-list">
+                    <!-- Songs will be populated here -->
+                </div>
+                <div class="file-upload">
+                    <label for="audio-upload" class="upload-btn">Upload Your Own Song</label>
+                    <input type="file" id="audio-upload" accept="audio/*" style="display: none;">
+                </div>
+                <button class="back-btn" id="back-to-menu">Back to Menu</button>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="game-screen" class="screen">
+            <div class="game-ui">
+                <div class="top-bar">
+                    <div class="score">Score: <span id="score">0</span></div>
+                    <div class="combo">Combo: <span id="combo">0</span></div>
+                    <div class="accuracy">Accuracy: <span id="accuracy">100%</span></div>
+                </div>
+                <div class="game-info">
+                    <div class="song-title" id="current-song">Song Title</div>
+                    <div class="time-info">
+                        <span id="current-time">0:00</span> / <span id="total-time">0:00</span>
+                    </div>
+                </div>
+            </div>
+            <canvas id="game-canvas"></canvas>
+            <div class="game-controls">
+                <button id="pause-btn" class="control-btn">⏸️</button>
+                <button id="back-to-select" class="control-btn">🏠</button>
+            </div>
+        </div>
+
+        <!-- Map Editor -->
+        <div id="editor-screen" class="screen">
+            <div class="editor-container">
+                <div class="editor-header">
+                    <h2>Map Editor</h2>
+                    <div class="editor-controls">
+                        <button id="load-song" class="editor-btn">Load Song</button>
+                        <button id="play-pause" class="editor-btn">Play/Pause</button>
+                        <button id="save-map" class="editor-btn">Save Map</button>
+                        <button id="load-map" class="editor-btn">Load Map</button>
+                        <button id="clear-map" class="editor-btn">Clear All</button>
+                        <button id="editor-back" class="editor-btn back">Back</button>
+                    </div>
+                </div>
+                <div class="editor-settings">
+                    <div class="setting-group">
+                        <label>Target Type:</label>
+                        <select id="target-type">
+                            <option value="circle">Circle</option>
+                            <option value="square">Square</option>
+                        </select>
+                    </div>
+                    <div class="setting-group">
+                        <label>Delay (ms):</label>
+                        <input type="number" id="delay-input" value="300" min="100" max="2000" step="50">
+                    </div>
+                    <div class="setting-group">
+                        <label>Grid Size:</label>
+                        <select id="grid-size">
+                            <option value="4">4x4</option>
+                            <option value="6" selected>6x6</option>
+                            <option value="8">8x8</option>
+                        </select>
+                    </div>
+                </div>
+                <canvas id="editor-canvas"></canvas>
+                <div class="timeline">
+                    <div class="timeline-controls">
+                        <span>Timeline: </span>
+                        <span id="timeline-time">0:00</span>
+                        <input type="range" id="timeline-slider" min="0" max="100" value="0">
+                    </div>
+                </div>
+            </div>
+            <input type="file" id="editor-audio-upload" accept="audio/*" style="display: none;">
+            <input type="file" id="map-file-input" accept=".json" style="display: none;">
+        </div>
+
+        <!-- How to Play -->
+        <div id="how-to-play" class="screen">
+            <div class="instructions-container">
+                <h2>How to Play Taimuragu</h2>
+                <div class="instruction-section">
+                    <h3>🎯 The Concept</h3>
+                    <p>Taimuragu is about <strong>delayed precision</strong>. Each target shows a number - that's how many milliseconds you must wait before clicking it!</p>
+                </div>
+                <div class="instruction-section">
+                    <h3>🎵 Gameplay</h3>
+                    <ul>
+                        <li>Targets spawn on the grid synced to the music beat</li>
+                        <li>Each target displays a countdown timer (e.g., 300ms → 200ms → 100ms)</li>
+                        <li>Click the target when its timer reaches zero for perfect timing</li>
+                        <li>Multiple targets will be active - prioritize the one closest to zero!</li>
+                    </ul>
+                </div>
+                <div class="instruction-section">
+                    <h3>🏆 Scoring</h3>
+                    <ul>
+                        <li><strong>Perfect (±25ms):</strong> 100 points</li>
+                        <li><strong>Great (±50ms):</strong> 75 points</li>
+                        <li><strong>Good (±100ms):</strong> 50 points</li>
+                        <li><strong>Miss:</strong> Breaks combo, -10 points</li>
+                    </ul>
+                </div>
+                <div class="instruction-section">
+                    <h3>🛠️ Map Editor</h3>
+                    <p>Create your own levels! Load any song, place targets on beat, and assign custom delay values. Share your creations with the community!</p>
+                </div>
+                <button class="back-btn" id="instructions-back">Back to Menu</button>
+            </div>
+        </div>
+
+        <!-- Pause Menu -->
+        <div id="pause-menu" class="overlay">
+            <div class="pause-container">
+                <h2>Paused</h2>
+                <div class="pause-buttons">
+                    <button id="resume-btn" class="menu-btn">Resume</button>
+                    <button id="restart-btn" class="menu-btn">Restart</button>
+                    <button id="quit-btn" class="menu-btn">Quit to Menu</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Over -->
+        <div id="game-over" class="overlay">
+            <div class="game-over-container">
+                <h2>Game Complete!</h2>
+                <div class="final-stats">
+                    <div class="stat">Final Score: <span id="final-score">0</span></div>
+                    <div class="stat">Max Combo: <span id="max-combo">0</span></div>
+                    <div class="stat">Final Accuracy: <span id="final-accuracy">100%</span></div>
+                </div>
+                <div class="game-over-buttons">
+                    <button id="play-again-btn" class="menu-btn">Play Again</button>
+                    <button id="game-over-menu" class="menu-btn">Main Menu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/audio.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/editor.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
